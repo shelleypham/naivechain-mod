@@ -34,15 +34,8 @@ var blockchain = [getGenesisBlock()];
 var initHttpServer = () => {
     var app = express();
     app.use(bodyParser.json());
-    app.use((req, res, next) => {
-      console.log(req.originalUrl);
-      return next();
-    })
 
-		app.get('/getPreviousHashAndIndex', (req, res) => {
-      let data = getPreviousHashAndIndex();
-      res.send(JSON.stringify(data))
-    });
+		app.get('/makeBlock', (req, res) => res.send(makeBlock(req.body.data)));
 
     app.get('/blocks', (req, res) => res.send(JSON.stringify(blockchain)));
     app.post('/mineBlock', (req, res) => {
@@ -104,11 +97,6 @@ var initErrorHandler = (ws) => {
     ws.on('error', () => closeConnection(ws));
 };
 
-let getPreviousHashAndIndex = () => {
-		var previousBlock = getLatestBlock();
-		var currentIndex = previousBlock.index;
-		return [previousBlock.hash, currentIndex];
-};
 
 var generateNextBlock = (blockData) => {
     var previousBlock = getLatestBlock();
